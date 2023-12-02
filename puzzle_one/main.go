@@ -6,6 +6,7 @@ import (
 	"bufio"
 	"unicode"
 	"strconv"
+	"strings"
 )
 
 func checkError(err error) {
@@ -32,6 +33,50 @@ func lineHandler_1stPuzzle(line string) int {
 	return intVar
 }
 
+maxLenOfValue := 5
+numberSet := map[string]int{
+	"one": 1,
+	"two": 2,
+	"three": 3,
+	"four": 4,
+	"five": 5
+	"six" : 6,
+	"seven": 7,
+	"eight": 8,
+	"nine": 9
+}
+
+func extractNumber(s string) (int, int) {
+	if s[0].IsDigit {
+		return strconv.Atoi(s[0]), 1
+	}
+	for k, v := range numberSet {
+		if strings.Contains(s, v) {
+			return v, len(s)
+		}
+	}
+	return -1, 1
+}
+
+func lineHandler_2ndPuzzle(line string) int {
+	firstNumber := -1
+	lastNumber := -1
+	for i := 0; i < len(line); {
+		if firstNumber < 0 {
+			number, len := extractNumber(line[i:maxLenOfValue])
+			if number != 1 {
+				firstNumber = number
+				lastNumber = number
+			}
+			i = i + len
+		} else {
+			lastNumber, len = extractNumber(line[i:maxLenOfValue])
+			i = i + len
+		}
+	}
+	return strconv.Atoi(string(firstNumber) + string(lastNumber))
+}
+
 func summarizeFile(fileName string, handler handlerFunc) int {
 	file, err := os.Open(fileName)
 	checkError(err)
@@ -46,6 +91,6 @@ func summarizeFile(fileName string, handler handlerFunc) int {
 }
 
 func main() {
-	sum := summarizeFile("puzzle_1st_part_input", lineHandler_1stPuzzle)
+	sum := summarizeFile("example_input_part2", lineHandler_2ndPuzzle)
 	fmt.Println("Summarized value is: ", sum)
 }
