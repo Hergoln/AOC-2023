@@ -33,48 +33,79 @@ func lineHandler_1stPuzzle(line string) int {
 	return intVar
 }
 
-maxLenOfValue := 5
-numberSet := map[string]int{
-	"one": 1,
-	"two": 2,
-	"three": 3,
-	"four": 4,
-	"five": 5
-	"six" : 6,
-	"seven": 7,
-	"eight": 8,
-	"nine": 9
-}
-
-func extractNumber(s string) (int, int) {
-	if s[0].IsDigit {
-		return strconv.Atoi(s[0]), 1
+var (
+	maxLenOfValue int = 5
+	numberSet = map[string]int{
+		"one": 1,
+		"two": 2,
+		"three": 3,
+		"four": 4,
+		"five": 5,
+		"six" : 6,
+		"seven": 7,
+		"eight": 8,
+		"nine": 9,
 	}
-	for k, v := range numberSet {
-		if strings.Contains(s, v) {
-			return v, len(s)
+)
+
+func extractNumber(s string) int {
+	for i := 0; i < len(s); i++ {
+		for k, v := range numberSet {
+			if strings.Contains(s[0:i+1], k) {
+				return v
+			}
+		}
+		if unicode.IsDigit(rune(s[i])) {
+			val, _ := strconv.Atoi(string(s[i]))
+			return val
 		}
 	}
-	return -1, 1
+	return 0
+
+	// if unicode.IsDigit(rune(s[0])) {
+	// 	val, _ := strconv.Atoi(string(s[0]))
+	// 	return val
+	// }
+	// for _, r := range s {
+	// 	if unicode.IsDigit(r) {
+			
+	// 	}
+	// }
+	// for k, v := range numberSet {
+	// 	if strings.Contains(s, k) {
+	// 		return v
+	// 	}
+	// }
+	// return 0
+}
+
+func computeEndOfSlice(lenOfLine, currentIndex, maxLen int) int {
+	if currentIndex + maxLen > lenOfLine {
+		return lenOfLine
+	}
+	return currentIndex + maxLen
 }
 
 func lineHandler_2ndPuzzle(line string) int {
-	firstNumber := -1
-	lastNumber := -1
-	for i := 0; i < len(line); {
-		if firstNumber < 0 {
-			number, len := extractNumber(line[i:maxLenOfValue])
-			if number != 1 {
+	firstNumber := 0
+	lastNumber := 0
+	for i := 0; i < len(line); i++ {
+		endOfSlice := computeEndOfSlice(len(line), i, maxLenOfValue)
+		if firstNumber <= 0 {
+			number := extractNumber(line[i:endOfSlice])
+			if number > 0 {
 				firstNumber = number
 				lastNumber = number
 			}
-			i = i + len
 		} else {
-			lastNumber, len = extractNumber(line[i:maxLenOfValue])
-			i = i + len
+			number := extractNumber(line[i:endOfSlice])
+			if number > 0 {
+				lastNumber = number
+			}
 		}
 	}
-	return strconv.Atoi(string(firstNumber) + string(lastNumber))
+	val, _ := strconv.Atoi(strconv.Itoa(firstNumber) + strconv.Itoa(lastNumber))
+	return val
 }
 
 func summarizeFile(fileName string, handler handlerFunc) int {
@@ -84,13 +115,13 @@ func summarizeFile(fileName string, handler handlerFunc) int {
 	sum := 0
 
 	for stream.Scan() {
-		sum = sum + lineHandler_1stPuzzle(stream.Text())
+		sum = sum + handler(stream.Text())
 	}
 	checkError(stream.Err())
 	return sum
 }
 
 func main() {
-	sum := summarizeFile("example_input_part2", lineHandler_2ndPuzzle)
+	sum := summarizeFile("puzzle_2nd_part_input", lineHandler_2ndPuzzle)
 	fmt.Println("Summarized value is: ", sum)
 }
