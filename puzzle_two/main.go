@@ -98,6 +98,15 @@ func getGameIndex(line string) (int, int) {
 	return val, sIndex
 }
 
+func gameResult(line string) int {
+	for len(line) > 0 {
+		take := getNextTake(line[1:])
+		
+		line = line[len(take)+1:]
+	}
+	return 1
+}
+
 func firstPart() {
 	stream := retrieveStreamFromFile("puzzle_1st_part_input")
 	sum := 0
@@ -107,6 +116,17 @@ func firstPart() {
 		if isLinePossible(line[prefixLen:]) {
 			sum = sum + gameId
 		}
+	}
+	fmt.Println(sum)
+}
+
+func secondPart() {
+	stream := retrieveStreamFromFile("example_input")
+	sum := 0
+	for stream.Scan() {
+		line := stream.Text()
+		_, prefixLen := getGameIndex(line)
+		sum = sum + gameResult(line[prefixLen:])
 	}
 	fmt.Println(sum)
 }
