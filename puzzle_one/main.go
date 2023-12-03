@@ -61,22 +61,6 @@ func extractNumber(s string) int {
 		}
 	}
 	return 0
-
-	// if unicode.IsDigit(rune(s[0])) {
-	// 	val, _ := strconv.Atoi(string(s[0]))
-	// 	return val
-	// }
-	// for _, r := range s {
-	// 	if unicode.IsDigit(r) {
-			
-	// 	}
-	// }
-	// for k, v := range numberSet {
-	// 	if strings.Contains(s, k) {
-	// 		return v
-	// 	}
-	// }
-	// return 0
 }
 
 func computeEndOfSlice(lenOfLine, currentIndex, maxLen int) int {
