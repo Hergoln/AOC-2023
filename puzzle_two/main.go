@@ -98,17 +98,44 @@ func getGameIndex(line string) (int, int) {
 	return val, sIndex
 }
 
+func calculateTake(take string, currentMax map[string]int) map[string]int {
+	color := ""
+	for len(take) > 0 {
+		space := strings.Index(take[1:], " ")
+		val, _ := strconv.Atoi(take[1:space+1])
+		take = take[space+1:]
+
+		commaIndex := strings.Index(take, ",")
+		if commaIndex == -1 {
+			color = take[1:]
+			take = ""
+		} else {
+			color = take[1:commaIndex]
+			take = take[commaIndex+1:]
+		}
+		if val > currentMax[color] {
+			currentMax[color] = val
+		}
+	}
+	return currentMax
+}
+
 func gameResult(line string) int {
+	currentMax := map[string]int{
+		"green": 1,
+		"red": 1,
+		"blue": 1,
+	}
 	for len(line) > 0 {
 		take := getNextTake(line[1:])
-		
+		currentMax = calculateTake(take, currentMax)
 		line = line[len(take)+1:]
 	}
-	return 1
+	return currentMax["green"] * currentMax["blue"] * currentMax["red"]
 }
 
 func firstPart() {
-	stream := retrieveStreamFromFile("puzzle_1st_part_input")
+	stream := retrieveStreamFromFile("puzzle_input")
 	sum := 0
 	for stream.Scan() {
 		line := stream.Text()
@@ -121,7 +148,7 @@ func firstPart() {
 }
 
 func secondPart() {
-	stream := retrieveStreamFromFile("example_input")
+	stream := retrieveStreamFromFile("puzzle_input")
 	sum := 0
 	for stream.Scan() {
 		line := stream.Text()
@@ -132,5 +159,5 @@ func secondPart() {
 }
 
 func main() {
-	firstPart()
+	secondPart()
 }
